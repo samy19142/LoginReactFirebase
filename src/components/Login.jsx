@@ -3,7 +3,14 @@ import SLIDER_1 from "../assets/slider-1.jpeg";
 import SLIDER_2 from "../assets/slider-2.jpeg";
 import { useState } from "react";
 
+import app from "../Firebase-config";
+import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth';
+
+
 const Login = () => {
+  const auth = getAuth(app);
+
+    const [registro,setRegistro]= useState(false);
     const [formData,setFormData] = useState({
         email:'',
         password:''
@@ -50,23 +57,24 @@ const Login = () => {
 
           {/* //todo Formulario*/}
           <Col md={4} xs={12} className="my-auto">
-            <h2>LOGIN </h2>
+            <h2>{registro?'Registro':'Iniciar sesion'} </h2>
             <Form>
               <Form.Group
                 className="mb-3"
                 controlId="email"
               >
-                <Form.Label>Email address</Form.Label>
+                <Form.Label>Email</Form.Label>
                 <Form.Control type="email" placeholder="name@example.com" name="email" onKeyUp={(e)=>handleInputs(e)} />
               </Form.Group>
               <Form.Group
                 className="mb-3"
                 controlId="password"
               >
-                <Form.Label>Password</Form.Label>
+                <Form.Label>CONTRASE;A</Form.Label>
                 <Form.Control name="password" onKeyUp={(e)=>handleInputs(e)} type="password" />
               </Form.Group>
-              <Button variant="primary" onClick={(e)=>handleSubmit(e)}>Iniciar</Button>
+              <Button variant="primary" onClick={(e)=>handleSubmit(e)}>{registro?'Registrar':'Iniciar'}</Button>
+              <Button variant="primary" onClick={()=>setRegistro(true)}>No tienes Cuenta</Button>
             </Form>
           </Col>
         </Row>
