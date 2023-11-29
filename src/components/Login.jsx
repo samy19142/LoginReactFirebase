@@ -1,34 +1,49 @@
-import { Button, Carousel, Col, Container, Form, Image, Row } from "react-bootstrap";
+import {
+  Button,
+  Carousel,
+  Col,
+  Container,
+  Form,
+  Image,
+  Row,
+  Stack,
+} from "react-bootstrap";
 import SLIDER_1 from "../assets/slider-1.jpeg";
-import SLIDER_2 from "../assets/slider-2.jpeg";
 import { useState } from "react";
-
-import app from "../Firebase-config";
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth';
-
+import { useAuth } from "../context/authContext/";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const auth = getAuth(app);
+  const navigate = useNavigate();
+  const { signup, login } = useAuth();
 
-    const [registro,setRegistro]= useState(false);
-    const [formData,setFormData] = useState({
-        email:'',
-        password:''
-    });
+  const [isRegister, setIsRegister] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-    const handleInputs =(e)=>{
-        e.preventDefault();
-        const {name,value} = e.target;
-            
-        setFormData({...formData,[name]:value})
+  const handleInputs = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
 
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleRegisterOrLogin = () => {
+    setIsRegister(!isRegister);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await signup(formData);
+      navigate("/");
+    } catch (error) {
+      console.log(error + "llego al error");
     }
-    
-    const handleSubmit=(e)=>{
-        e.preventDefault();
-        console.log(formData);
-        console.log('fin')
-    }
+  };
 
   return (
     <>
@@ -38,43 +53,67 @@ const Login = () => {
           <Col md={8} xs={12} className="bg-dark">
             <Carousel fade>
               <Carousel.Item>
-                <Image className="d-block w-100" src={SLIDER_1}  style={{ width: '100%', height: 'auto' }}></Image>
+                <Image
+                  className="d-block w-100"
+                  src={SLIDER_1}
+                  style={{ width: "100%", height: "auto" }}
+                ></Image>
                 <Carousel.Caption>
                   <h3>Bienvenido</h3>
                   <p></p>
                 </Carousel.Caption>
               </Carousel.Item>
 
+              {/*
               <Carousel.Item>
-                <Image className="d-block w-100" src={SLIDER_2} style={{ width: '100%', height: 'auto' }}></Image>
+                <Image
+                  className="d-block w-100"
+                  src={SLIDER_2}
+                  style={{ width: "100%", height: "auto" }}
+                ></Image>
                 <Carousel.Caption>
                   <h3>Curso Intecap</h3>
                   <p>2023</p>
                 </Carousel.Caption>
               </Carousel.Item>
+            */}
             </Carousel>
           </Col>
 
           {/* //todo Formulario*/}
           <Col md={4} xs={12} className="my-auto">
-            <h2>{registro?'Registro':'Iniciar sesion'} </h2>
+            <h2>{isRegister ? "Registrar" : "Iniciar sesion"} </h2>
             <Form>
-              <Form.Group
-                className="mb-3"
-                controlId="email"
-              >
+              <Form.Group className="mb-3" controlId="email">
                 <Form.Label>Email</Form.Label>
-                <Form.Control type="email" placeholder="name@example.com" name="email" onKeyUp={(e)=>handleInputs(e)} />
+                <Form.Control
+                  type="email"
+                  placeholder="name@example.com"
+                  name="email"
+                  onKeyUp={(e) => handleInputs(e)}
+                  required
+                />
               </Form.Group>
-              <Form.Group
-                className="mb-3"
-                controlId="password"
-              >
-                <Form.Label>CONTRASE;A</Form.Label>
-                <Form.Control name="password" onKeyUp={(e)=>handleInputs(e)} type="password" />
+              <Form.Group className="mb-3" controlId="password">
+                <Form.Label>Contrase</Form.Label>
+                <Form.Control
+                  name="password"
+                  onKeyUp={(e) => handleInputs(e)}
+                  type="password"
+                  required
+                />
               </Form.Group>
-              <Button variant="primary" onClick={(e)=>handleSubmit(e)}>{registro?'Registrar':'Iniciar'}</Button>
-              <Button variant="primary" onClick={()=>setRegistro(true)}>No tienes Cuenta</Button>
+              <Stack gap={2}>
+                <Button variant="primary" onClick={(e) => handleSubmit(e)}>
+                  {isRegister ? "Registrar" : "Iniciar sesión"}
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => handleRegisterOrLogin()}
+                >
+                  {isRegister ? "Regresar" : "Registrar"}
+                </Button>
+              </Stack>
             </Form>
           </Col>
         </Row>
