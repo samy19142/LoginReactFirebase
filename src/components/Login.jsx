@@ -12,6 +12,7 @@ import SLIDER_1 from "../assets/slider-1.jpeg";
 import { useState } from "react";
 import { useAuth } from "../context/authContext/";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -37,11 +38,31 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
     try {
-      await signup(formData);
-      navigate("/");
+      if(isRegister){
+        await signup(formData);
+        Swal.fire({
+          position:'top-right',
+          icon:'success',
+          title:'Registro Exitoso!',
+          showConfirmButton:false,
+          timer:1500,
+        });
+      }else{
+        await login(formData);
+        navigate('/')
+      }
+      
     } catch (error) {
-      console.log(error + "llego al error");
+      console.log(error);
+      Swal.fire({
+        position:'top-right',
+        icon:'error',
+        title:'Ocurrio un error mientras se registraba',
+        showConfirmButton:false,
+        timer:1500,
+      });
     }
   };
 
@@ -95,7 +116,7 @@ const Login = () => {
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="password">
-                <Form.Label>Contrase</Form.Label>
+                <Form.Label>Contraseña</Form.Label>
                 <Form.Control
                   name="password"
                   onKeyUp={(e) => handleInputs(e)}
